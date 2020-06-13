@@ -8,6 +8,8 @@
 [![](http://cranlogs.r-pkg.org/badges/grand-total/summarytools)](http://cran.rstudio.com/web/packages/summarytools/index.html)
 [![Rdoc](http://www.rdocumentation.org/badges/version/summarytools)](http://www.rdocumentation.org/packages/summarytools)
 
+<span class="badge-paypal"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/PayPal-Donate-blue" alt="PayPal donate button" /></a></span>
+
 The following vignettes complement this page:
 
 [Recommendations for Using summarytools With
@@ -44,6 +46,29 @@ The package was developed with the following objectives in mind:
     [Rmarkdown](https://rmarkdown.rstudio.com/), and
     [knitr](https://yihui.org/knitr/)) while also allowing for
     stand-alone, simple report generation
+
+On a more personal level, I simply wish to share with the scientific
+community at large the functions I first developed for myself, that I
+ultimately realized would benefit a lot of people who are looking for
+the same thing I was seeking in the first place.
+
+If you find **summarytools** helps you accomplish your own work, please
+consider making a small donation using *PayPal* or becoming a GitHub
+Sponsor.
+
+<table style="width:100%">
+
+<tr>
+
+<td style="text-align:center; border-color:white">
+
+<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url'><img src='img/paypal-blue.svg' align="center" height="44"></a>
+
+</td>
+
+</tr>
+
+</table>
 
 ## 1.2 Redirecting Outputs
 
