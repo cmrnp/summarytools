@@ -10,6 +10,8 @@
 
 <span class="badge-paypal"><a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url" title="Donate to this project using Paypal"><img src="https://img.shields.io/badge/PayPal-Donate-blue" alt="PayPal donate button" /></a></span>
 
+<!-- https://img.shields.io/badge/Donate-PayPal-blue -->
+
 The following vignettes complement this page:
 
 [Recommendations for Using summarytools With
@@ -62,7 +64,7 @@ Sponsor.
 
 <td style="text-align:center; border-color:white">
 
-<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url'><img src='img/paypal-blue.svg' align="center" height="44"></a>
+<a href='https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url'><img src='img/paypal-blue.svg' align="center" height="52"></a>
 
 </td>
 

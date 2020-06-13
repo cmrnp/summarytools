@@ -131,7 +131,7 @@ descr <- function(x,
                  var_name  = (ncol(x) == 1),
                  var_label = (ncol(x) == 1), caller = "descr"),
       silent = TRUE)
-
+    
     outlist  <- list()
     gr_ks    <- map_groups(group_keys(x))
     gr_inds  <- attr(x, "groups")$.rows
@@ -228,11 +228,15 @@ descr <- function(x,
   }
   
   # Get variable label
-  var_label <- label(x.df[[1]])
+  if (ncol(x.df) == 1) {
+    var_label <- label(x.df[[1]])
+  } else {
+    var_label <- NA
+  }
   
   if (!is.data.frame(x.df)) {
     errmsg %+=% paste("'x' must be a numeric vector, a data.frame, a tibble,",
-                     "a data.table; attempted conversion to tibble failed")
+                      "a data.table; attempted conversion to tibble failed")
   }
   
   errmsg <- c(errmsg, check_args(match.call(), list(...)))
@@ -264,14 +268,14 @@ descr <- function(x,
       errmsg %+=%
         paste("The following statistics are not recognized, or not allowed: ",
               paste(dQuote(invalid_stats), collapse = ", ")
-              )
+        )
     }
   }
-
+  
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "))
   }
-
+  
   # End of arguments validation ------------------------------------------------
   
   # When style is rmarkdown, make plain.ascii FALSE unless specified explicitly
@@ -290,7 +294,7 @@ descr <- function(x,
   if (inherits(parse_info, "try-error")) {
     parse_info <- list()
   }
-
+  
   if (!"var_name" %in% names(parse_info)) {
     if (exists("varname")) {
       parse_info$var_name <- varname
@@ -311,36 +315,41 @@ descr <- function(x,
   if (ncol(x.df) == 0) {
     stop("no numerical variable(s) given as argument")
   }
-
+  
   # No weights being used ------------------------------------------------------
   if (identical(weights, NA)) {
     
     # Prepare the summarizing functions for dplyr::summarize; there are 3 stats
     # that will be calculated later on so to not slow down the function
-    summar_funs <- list(mean, 
-                        sd, 
-                        min, 
-                        q1 = quantile(., probs = .25, type = 2, names = FALSE),
-                        med = median,
-                        q3 = quantile(., probs = .75, type = 2, names = FALSE),
-                        max,
-                        mad,
-                        iqr = IQR,
-                        cv = -999,
-                        skewness = rapportools::skewness,
-                        se.skewness = -999,
-                        kurtosis = rapportools::kurtosis,
-                        n.valid = rapportools::nvalid,
-                        pct.valid = -999)
+    dummy <- function(x) NA
     
-    summar_funs <- summar_funs[which(names(summar_funs) %in% stats)]
-
+    summar_funs <- list(~ mean(., na.rm = na.rm),
+                        ~ sd(., na.rm = na.rm),
+                        ~ min(., na.rm = na.rm),
+                        ~ quantile(., probs = .25, type = 2, names = FALSE, na.rm = na.rm),
+                        ~ median(., na.rm = na.rm),
+                        ~ quantile(., probs = .75, type = 2, names = FALSE, na.rm = na.rm),
+                        ~ max(., na.rm = na.rm),
+                        ~ mad(., na.rm = na.rm),
+                        ~ IQR(., na.rm = na.rm),
+                        ~ dummy(.), # placeholder for cv
+                        ~ rapportools::skewness(., na.rm = na.rm),
+                        ~ dummy(.), # placeholder for se.skewnes
+                        ~ rapportools::kurtosis(., na.rm = na.rm),
+                        ~ rapportools::nvalid(., na.rm = na.rm),
+                        ~ dummy(.))  # placeholder for pct.valid
+    
+    fun_names <- c("mean", "sd", "min", "q1", "med", "q3", "max", "mad", "iqr", "cv", "skewness",
+                   "se.skewness", "kurtosis", "n.valid", "pct.valid")
+    names(summar_funs) <- fun_names
+    summar_funs <- summar_funs[which(fun_names %in% stats)]
+    
     if (ncol(x.df) > 1) {
       results <- suppressWarnings(
-        x.df %>% summarize_all(.funs = summar_funs, na.rm = na.rm) %>%
-        gather("variable", "value") %>%
-        separate("variable", c("var", "stat"), sep = "_(?=[^_]*$)") %>%
-        spread("var", "value")
+        x.df %>% summarize_all(.funs = summar_funs) %>%
+          gather("variable", "value") %>%
+          separate("variable", c("var", "stat"), sep = "_(?=[^_]*$)") %>%
+          spread("var", "value")
       )
       
       # Transform results into output object
@@ -351,7 +360,7 @@ descr <- function(x,
         as.data.frame
       rownames(output) <- parse_info$var_name
     }
-
+    
     # Calculate additional stats if needed
     if ("cv" %in% stats) {
       output$cv <- output$sd / output$mean
@@ -377,20 +386,20 @@ descr <- function(x,
     # Weights being used -------------------------------------------------------
     
     weights_string <- deparse(substitute(weights))
-
+    
     if (sum(is.na(weights)) > 0) {
       warning("Missing values on weight variable have been detected and will",
               "be treated as zeroes")
       weights[is.na(weights)] <- 0
     }
-
+    
     # If some weights are 0 or negative, delete rows
     zero_wgts <- which(weights <= 0)
     if (length(zero_wgts)) {
       x.df <- x.df[-zero_wgts, ]
       message(length(zero_wgts), " rows with weight <= 0 were deleted")
     }
-
+    
     # If weights are in x.df, remove them
     if(length(parse_info$df_name) == 1 && 
        grepl(parse_info$df_name, weights_string)) {
@@ -437,7 +446,7 @@ descr <- function(x,
         variable <- variable[ind]
         weights_tmp <- weights[ind]
       }
-
+      
       # Calculate mean and sd if necessary
       if (any(c("mean", "cv") %in% stats)) {
         variable.mean <- weightedMean(variable, weights_tmp, refine = TRUE, 
@@ -497,7 +506,7 @@ descr <- function(x,
       colnames(output)[i] <- trs(colnames(output)[i])
     }
   }
-
+  
   # Transpose when transpose is FALSE; even though this is counter-intuitive,
   # we prefer that the "vertical" version be the default one and that at the
   # same time, the default value for transpose be FALSE.
