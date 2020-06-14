@@ -60,7 +60,7 @@ Sponsor.
 
 <table style="width:100%">
 
-<tr>
+<tr style="border-color:transparent; border-collapse:collapse;">
 
 <td style="text-align:center; border-color:white">
 
