@@ -58,7 +58,7 @@ If you find **summarytools** helps you accomplish your own work, please
 consider making a small donation using *PayPal* or becoming a GitHub
 Sponsor.
 
-<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url"><img width=210 height=40 src="img/paypal-blue.svg"></a>\]
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=HMN3QJR7UMT7S&item_name=Help+scientists,+data+scientists+and+analysts+arount+the+globe&currency_code=CAD&source=url"><img width=210 height=40 src="img/paypal-blue.svg"></a>
 
 ## 1.2 Redirecting Outputs
 
