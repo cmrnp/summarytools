@@ -28,7 +28,7 @@
 #' @param graph.col Logical. Display barplots / histograms column in \emph{html}
 #'   reports. \code{TRUE} by default, but can be set globally; see
 #'   \code{\link{st_options}}, option \dQuote{dfSummary.graph.col}.
-#' @param graph.encod Character. Either \dQuote{utf-8} (default) or
+#' @param graph.enc Character. Either \dQuote{utf-8} (default) or
 #'   \dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
 #'   option \dQuote{dfSummary.graph.col}.
 #' @param graph.magnif Numeric. Magnification factor, useful if the graphs show
@@ -174,7 +174,7 @@ dfSummary <- function(x,
                       na.col           = st_options("dfSummary.na.col"),
                       graph.col        = st_options("dfSummary.graph.col"),
                       graph.magnif     = st_options("dfSummary.graph.magnif"),
-                      graph.encod      = st_options("dfSummary.graph.encod"),
+                      graph.enc        = st_options("dfSummary.graph.enc"),
                       style            = st_options("dfSummary.style"),
                       plain.ascii      = st_options("plain.ascii"),
                       justify          = "l",
@@ -568,7 +568,7 @@ crunch_factor <- function(column_data, email_val) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
       }
     }
     
@@ -613,7 +613,7 @@ crunch_factor <- function(column_data, email_val) {
         png_loc <- encode_graph(table(tmp_data), "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(table(tmp_data)), encoding = parent.frame()$graph.encod)
+        outlist[[4]] <- txtbarplot(prop.table(table(tmp_data)), encoding = parent.frame()$graph.enc)
       }
     }
   }
@@ -677,7 +677,7 @@ crunch_character <- function(column_data, email_val) {
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
         outlist[[4]] <- txtbarplot(c(prop.table(email_val), prop.dups), 
-                                   emails = TRUE, encoding = parent.frame()$graph.encod)
+                                   emails = TRUE, encoding = parent.frame()$graph.enc)
       }
     }
 
@@ -710,7 +710,7 @@ crunch_character <- function(column_data, email_val) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
         }
       }
     } else {
@@ -750,7 +750,7 @@ crunch_character <- function(column_data, email_val) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
         }
       } 
     }
@@ -794,7 +794,7 @@ crunch_logical <- function(column_data) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
       }
     }
   }
@@ -946,7 +946,7 @@ crunch_numeric <- function(column_data, is_barcode) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
         }
         
         if (isTRUE(extra_space)) {
@@ -963,7 +963,7 @@ crunch_numeric <- function(column_data, is_barcode) {
           png_loc <- encode_graph(column_data, "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txthist(column_data, encoding = parent.frame()$graph.encod)
+          outlist[[4]] <- txthist(column_data, encoding = parent.frame()$graph.enc)
         }
       }
     }
@@ -1010,7 +1010,7 @@ crunch_time_date <- function(column_data) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.enc)
       }
     } else {
       
@@ -1047,7 +1047,7 @@ crunch_time_date <- function(column_data) {
           png_loc <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txthist(tmp - mean(tmp), encoding = parent.frame()$graph.encod)
+          outlist[[4]] <- txthist(tmp - mean(tmp), encoding = parent.frame()$graph.enc)
         }
       }
     }
@@ -1238,7 +1238,7 @@ generate_png_path <- function(d) {
 
 #' @keywords internal
 txtbarplot <- function(props, emails = FALSE, 
-                       encoding = st_options("dfSummary.graph.encod")) {
+                       encoding = st_options("dfSummary.graph.enc")) {
   if (encoding == "ascii") {
     maxwidth <- 20
     widths   <- props * maxwidth

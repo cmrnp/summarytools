@@ -48,7 +48,7 @@ utils::globalVariables(c("."))
                  "dfSummary.valid.col"    = TRUE,
                  "dfSummary.na.col"       = TRUE,
                  "dfSummary.graph.magnif" = 1,
-                 "dfSummary.graph.encod"  = "utf-8",
+                 "dfSummary.graph.enc"    = "utf-8",
                  "dfSummary.silent"       = FALSE,
                  "tmp.img.dir"            = NA_character_,
                  "subtitle.emphasis"      = TRUE,

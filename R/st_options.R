@@ -77,7 +77,7 @@
 #'   \code{\link{dfSummary}} graphs show up too large (then use a value between
 #'   0 and 1) or too small (use a value > 1). Must be positive. Default to
 #'   \code{1}.
-#' @param dfSummary.graph.encod Character. Encoding for text graphs. Either
+#' @param dfSummary.graph.enc Character. Encoding for text graphs. Either
 #'   \dQuote{utf-8} (default) or \dQuote{ascii}.
 #' @param dfSummary.silent Logical. Hide console messages. \code{FALSE} by 
 #'   default.

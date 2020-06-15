@@ -778,24 +778,25 @@ The following options can be set with `st_options()`:
 
 ## 7.2 Function-Specific Options
 
-|            Option name | Default | Note                                                |
-| ---------------------: | ------: | :-------------------------------------------------- |
-|            freq.totals |    TRUE | Display totals row in freq()                        |
-|        freq.report.nas |    TRUE | Display <NA> row and “valid” columns                |
-|            freq.silent |   FALSE | Hide console messages                               |
-|            ctable.prop |     “r” | Display **r**ow proportions by default              |
-|          ctable.totals |    TRUE | Show marginal totals                                |
-|            descr.stats |   “all” | “fivenum”, “common” or vector of stats              |
-|        descr.transpose |   FALSE | Display stats in columns instead of rows            |
-|           descr.silent |   FALSE | Hide console messages                               |
-|   dfSummary.varnumbers |    TRUE | Show variable numbers in 1st col.                   |
-|   dfSummary.labels.col |    TRUE | Show variable labels when present                   |
-|    dfSummary.graph.col |    TRUE | Show graphs                                         |
-|    dfSummary.valid.col |    TRUE | Include the Valid column in the output              |
-|       dfSummary.na.col |    TRUE | Include the Missing column in the output            |
-| dfSummary.graph.magnif |       1 | Zoom factor for bar plots and histograms            |
-|       dfSummary.silent |   FALSE | Hide console messages                               |
-|            tmp.img.dir |      NA | Directory to store [temporary images](#tmp-img-dir) |
+|            Option name | Default | Note                                                      |
+| ---------------------: | ------: | :-------------------------------------------------------- |
+|            freq.totals |    TRUE | Display totals row in freq()                              |
+|        freq.report.nas |    TRUE | Display <NA> row and “valid” columns                      |
+|            freq.silent |   FALSE | Hide console messages                                     |
+|            ctable.prop |     “r” | Display **r**ow proportions by default                    |
+|          ctable.totals |    TRUE | Show marginal totals                                      |
+|            descr.stats |   “all” | “fivenum”, “common” or vector of stats                    |
+|        descr.transpose |   FALSE | Display stats in columns instead of rows                  |
+|           descr.silent |   FALSE | Hide console messages                                     |
+|   dfSummary.varnumbers |    TRUE | Show variable numbers in 1st col.                         |
+|   dfSummary.labels.col |    TRUE | Show variable labels when present                         |
+|    dfSummary.graph.col |    TRUE | Show graphs                                               |
+|    dfSummary.valid.col |    TRUE | Include the Valid column in the output                    |
+|       dfSummary.na.col |    TRUE | Include the Missing column in the output                  |
+| dfSummary.graph.magnif |       1 | Zoom factor for bar plots and histograms                  |
+|    dfSummary.graph.enc | “ascii” | Encoding for text graphs (use “utf-8” for fancier graphs) |
+|       dfSummary.silent |   FALSE | Hide console messages                                     |
+|            tmp.img.dir |      NA | Directory to store [temporary images](#tmp-img-dir)       |
 
 **Examples**
 

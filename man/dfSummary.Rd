@@ -13,7 +13,7 @@ dfSummary(
   na.col = st_options("dfSummary.na.col"),
   graph.col = st_options("dfSummary.graph.col"),
   graph.magnif = st_options("dfSummary.graph.magnif"),
-  graph.encod = st_options("dfSummary.graph.encod"),
+  graph.enc = st_options("dfSummary.graph.enc"),
   style = st_options("dfSummary.style"),
   plain.ascii = st_options("plain.ascii"),
   justify = "l",
@@ -67,7 +67,7 @@ up too large (then use a value < 1) or too small (use a value > 1). Must be
 positive. Default to \code{1}. Can be set globally; see
 \code{\link{st_options}}, option \dQuote{dfSummary.graph.magnif}.}
 
-\item{graph.encod}{Character. Either \dQuote{utf-8} (default) or
+\item{graph.enc}{Character. Either \dQuote{utf-8} (default) or
 \dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
 option \dQuote{dfSummary.graph.col}.}
 

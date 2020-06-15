@@ -142,6 +142,9 @@ default.}
 0 and 1) or too small (use a value > 1). Must be positive. Default to
 \code{1}.}
 
+\item{dfSummary.graph.enc}{Character. Encoding for text graphs. Either
+\dQuote{utf-8} (default) or \dQuote{ascii}.}
+
 \item{dfSummary.silent}{Logical. Hide console messages. \code{FALSE} by 
 default.}
 
@@ -162,9 +165,6 @@ produced outputs. Currently available languages are: \sQuote{en},
 setting this to \code{FALSE} will prevent errors occurring when
 \code{\link{dfSummary}}  tries to generate \emph{html} 
 \dQuote{Base64-encoded} graphs.}
-
-\item{dfSummary.graph.encod}{Character. Encoding for text graphs. Either
-\dQuote{utf-8} (default) or \dQuote{ascii}.}
 }
 \description{
 To list all \code{summarytools} global options, call without arguments. To

@@ -554,6 +554,7 @@ The following options can be set with `st_options()`:
 | dfSummary.valid.col    |   TRUE   | Include the Valid column in the output   |
 | dfSummary.na.col       |   TRUE   | Include the Missing column in the output |
 | dfSummary.graph.magnif |      1   | Zoom factor for bar plots and histograms |
+| dfSummary.graph.enc    | “ascii”  | Encoding for text graphs (use “utf-8” for fancier graphs)|
 | dfSummary.silent       |  FALSE   | Hide console messages                    |
 | tmp.img.dir            |     NA   | Directory to store [temporary images](#tmp-img-dir) |
 
