@@ -1,21 +1,23 @@
 #' Data frame Summary
 #'
 #' Summary of a data frame consisting of: variable names, labels if any, factor
-#' levels, frequencies and/or numerical summary statistics, and valid/missing
-#' observation counts.
+#' levels, frequencies and/or numerical summary statistics, graphs and valid/missing
+#' observation counts. 
 #'
 #' @param x A data frame.
-#' @param round.digits Number of significant digits to display. Defaults to
-#'   \code{2} and can be set globally; see \code{\link{st_options}}.
-#' @param varnumbers Logical. Should the first column contain variable number?
-#'   Defaults to \code{TRUE}. Can be set globally; see \code{\link{st_options}},
-#'   option \dQuote{dfSummary.varnumbers}.
-#' @param labels.col Logical. If \code{TRUE}, variable labels (as defined with
-#'   \pkg{rapportools}, \pkg{Hmisc} or \pkg{summarytools}' \code{label}
-#'   functions) will be displayed. \code{TRUE} by default, but the \emph{labels}
-#'   column is only shown if at least one column has a defined label. This
-#'   option can also be set globally; see \code{\link{st_options}}, option 
-#'   \dQuote{dfSummary.labels.col}.
+#' @param round.digits Number of significant digits to display. The default
+#'   value of (\code{2}) comes from the global \pkg{summarytools} option
+#'   of the same name. See \code{\link{st_options}} for details.
+#' @param varnumbers Logical. Determines a column with variable numbers
+#'   should be included as the first column in the output table. The default
+#'   (\code{TRUE}) comes from the global option \dQuote{dfSummary.varnumbers}
+#'   and Can be set using \code{\link{st_options}}.
+#' @param labels.col Logical. If \code{TRUE}, a column showing variable labels
+#'   will be included in the results. Even when this parameter is set to 
+#'   \code{TRUE}, the column will only appear if at least one variable label is
+#'   set. This option can be set globally; see \code{\link{st_options}}, 
+#'   option \dQuote{dfSummary.labels.col}. See \emph{details} to learn more
+#'   about variable labels.
 #' @param valid.col Logical. Include column indicating count and proportion of
 #'   valid (non-missing) values. \code{TRUE} by default, but can be set
 #'   globally; see \code{\link{st_options}}, option
@@ -98,13 +100,18 @@
 #'       proportion of valid values.}
 #'     \item{Missing}{Number and proportion of missing (NA and NAN) values.} }
 #'
-#' @details The default \code{plain.ascii = TRUE} option is there to make
-#'   results appear cleaner in the console. When used in a context of
-#'   \emph{rmarkdown} rendering, set this option to \code{FALSE}.
-#'
-#'   When the \code{trim.strings} is set to \code{TRUE}, trimming is done
+#' @details The default value \code{plain.ascii = TRUE} is intended to facilitate
+#'   interactive data exploration. When using the package for reporting with
+#'   \emph{rmarkdown}, make sure to turn this option off. 
+#'   
+#'   When the \code{trim.strings} is \code{TRUE}, trimming is done
 #'   \emph{before} calculating frequencies, so those will be impacted
 #'   accordingly.
+#'
+#'   Several packages allow defining \emph{variable labels}, \pkg{summarytools}
+#'   being one of them. More often than not, labels are simply an attribute called
+#'   "label". Some packages also use special classes made for labelled objects,
+#'   but \pkg{summarytools} doesn't use nor look for any such class.
 #'
 #'   Specifying \code{tmp.img.dir} allows producing results consistent with
 #'   pandoc styling while also showing \emph{png} graphs. Due to the fact that
@@ -1299,7 +1306,7 @@ txthist <- function(data, encoding) {
     } else {
       counts <- as.vector(table(cut(data, breaks = 10)))
     }
-  
+
     max_count   <- 10
     counts      <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
     graph       <- matrix(data = "", nrow = 5, ncol = length(counts))
@@ -1334,6 +1341,8 @@ txthist <- function(data, encoding) {
     } else {
       counts <- as.vector(table(cut(data, breaks = 16)))
     }
+
+    #counts <- as.vector(table(cut(data, breaks = 16)))
     
     # The maximum count will impact the number of rows in the graph --
     # it will be max_count / 2
@@ -1345,7 +1354,7 @@ txthist <- function(data, encoding) {
     #  - a half height rectangle bar 
     #  - "\\" which indicate blanks
     #  - a box frame character
-    graph  <- matrix(data = "", nrow = 6, ncol = length(counts))
+    graph  <- matrix(data = "", nrow = (max_count/2), ncol = length(counts))
     
     for (ro in (max_count/2):1) {
       for (co in seq_along(counts)) {
@@ -1358,21 +1367,21 @@ txthist <- function(data, encoding) {
           #"<U+2584>" #intToUtf8(10294) #9604 works with 9608 (dense) 
           #10294 braille doesn't seem to work
         } else {
-          if (sum(counts[1, co:length(counts)] > 0)) {
+          #if (sum(counts[1, co:length(counts)] > 0)) {
             graph[ro,co] <- "\\ "
-          }
+          #}
         }
       }
       counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
                        nrow = 1, byrow = TRUE)
     }
     
-    # graph <- cbind("|", graph, "|")
-    # graph <- rbind("─", graph, "─")
-    # graph[1,1] <- "╭"
-    # graph[nrow(graph),1] <- "╰"
-    # graph[1,ncol(graph)] <- "╮"
-    # graph[nrow(graph),ncol(graph)] <- "╯"
+    graph <- cbind(intToUtf8(9474), graph)
+    graph <- rbind(graph, intToUtf8(9472))
+    #graph[1,1] <- intToUtf8(9581)
+    graph[nrow(graph),1] <- intToUtf8(9584) 
+    # graph[1,ncol(graph)] <- intToUtf8(9582)
+    # graph[nrow(graph),ncol(graph)] <- intToUtf8(9582)
 
     graphlines <- character()
     for (ro in seq_len(nrow(graph))) {

@@ -13,6 +13,7 @@ dfSummary(
   na.col = st_options("dfSummary.na.col"),
   graph.col = st_options("dfSummary.graph.col"),
   graph.magnif = st_options("dfSummary.graph.magnif"),
+  graph.encod = st_options("dfSummary.graph.encod"),
   style = st_options("dfSummary.style"),
   plain.ascii = st_options("plain.ascii"),
   justify = "l",
@@ -32,19 +33,21 @@ dfSummary(
 \arguments{
 \item{x}{A data frame.}
 
-\item{round.digits}{Number of significant digits to display. Defaults to
-\code{2} and can be set globally; see \code{\link{st_options}}.}
+\item{round.digits}{Number of significant digits to display. The default
+value of (\code{2}) comes from the global \pkg{summarytools} option
+of the same name. See \code{\link{st_options}} for details.}
 
-\item{varnumbers}{Logical. Should the first column contain variable number?
-Defaults to \code{TRUE}. Can be set globally; see \code{\link{st_options}},
-option \dQuote{dfSummary.varnumbers}.}
+\item{varnumbers}{Logical. Determines a column with variable numbers
+should be included as the first column in the output table. The default
+(\code{TRUE}) comes from the global option \dQuote{dfSummary.varnumbers}
+and Can be set using \code{\link{st_options}}.}
 
-\item{labels.col}{Logical. If \code{TRUE}, variable labels (as defined with
-\pkg{rapportools}, \pkg{Hmisc} or \pkg{summarytools}' \code{label}
-functions) will be displayed. \code{TRUE} by default, but the \emph{labels}
-column is only shown if at least one column has a defined label. This
-option can also be set globally; see \code{\link{st_options}}, option 
-\dQuote{dfSummary.labels.col}.}
+\item{labels.col}{Logical. If \code{TRUE}, a column showing variable labels
+will be included in the results. Even when this parameter is set to 
+\code{TRUE}, the column will only appear if at least one variable label is
+set. This option can be set globally; see \code{\link{st_options}}, 
+option \dQuote{dfSummary.labels.col}. See \emph{details} to learn more
+about variable labels.}
 
 \item{valid.col}{Logical. Include column indicating count and proportion of
 valid (non-missing) values. \code{TRUE} by default, but can be set
@@ -63,6 +66,10 @@ reports. \code{TRUE} by default, but can be set globally; see
 up too large (then use a value < 1) or too small (use a value > 1). Must be
 positive. Default to \code{1}. Can be set globally; see
 \code{\link{st_options}}, option \dQuote{dfSummary.graph.magnif}.}
+
+\item{graph.encod}{Character. Either \dQuote{utf-8} (default) or
+\dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
+option \dQuote{dfSummary.graph.col}.}
 
 \item{style}{Style to be used by \code{\link[pander]{pander}} when rendering
 output table. Defaults to \dQuote{multiline}. The only other valid option
@@ -118,10 +125,6 @@ rendering dfSummary() with `method = "pander"`, `plain.ascii = TRUE` and
 change this value globally, see \code{\link{st_options}}.}
 
 \item{\dots}{Additional arguments passed to \code{\link[pander]{pander}}.}
-
-\item{graph.encod}{Character. Either \dQuote{utf-8} (default) or
-\dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
-option \dQuote{dfSummary.graph.col}.}
 }
 \value{
 A data frame with additional class \code{summarytools} containing as
@@ -149,17 +152,22 @@ A data frame with additional class \code{summarytools} containing as
 }
 \description{
 Summary of a data frame consisting of: variable names, labels if any, factor
-levels, frequencies and/or numerical summary statistics, and valid/missing
+levels, frequencies and/or numerical summary statistics, graphs and valid/missing
 observation counts.
 }
 \details{
-The default \code{plain.ascii = TRUE} option is there to make
-  results appear cleaner in the console. When used in a context of
-  \emph{rmarkdown} rendering, set this option to \code{FALSE}.
-
-  When the \code{trim.strings} is set to \code{TRUE}, trimming is done
+The default value \code{plain.ascii = TRUE} is intended to facilitate
+  interactive data exploration. When using the package for reporting with
+  \emph{rmarkdown}, make sure to turn this option off. 
+  
+  When the \code{trim.strings} is \code{TRUE}, trimming is done
   \emph{before} calculating frequencies, so those will be impacted
   accordingly.
+
+  Several packages allow defining \emph{variable labels}, \pkg{summarytools}
+  being one of them. More often than not, labels are simply an attribute called
+  "label". Some packages also use special classes made for labelled objects,
+  but \pkg{summarytools} doesn't use nor look for any such class.
 
   Specifying \code{tmp.img.dir} allows producing results consistent with
   pandoc styling while also showing \emph{png} graphs. Due to the fact that
