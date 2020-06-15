@@ -48,6 +48,35 @@ conv_non_ascii <- function(...) {
   out
 }
 
+trueUnicode <- function(x) {
+  packuni<-Vectorize(function(cp) {
+    bv <- intToBits(cp)
+    maxbit <- tail(which(bv!=as.raw(0)),1)
+    if(maxbit < 8) {
+      rawToChar(as.raw(codepoint))
+    } else if (maxbit < 12) {
+      rawToChar(rev(packBits(c(bv[1:6], as.raw(c(0,1)),
+                               bv[7:11], as.raw(c(0,1,1))), "raw")))
+    } else if (maxbit < 17){
+      rawToChar(rev(packBits(c(bv[1:6], as.raw(c(0,1)), 
+                               bv[7:12], as.raw(c(0,1)), 
+                               bv[13:16], as.raw(c(0,1,1,1))), "raw")))    
+    } else {
+      stop("too many bits")
+    }
+  })
+  m <- gregexpr("<U\\+[0-9a-fA-F]{4}>", x)
+  codes <- regmatches(x,m)
+  chars <- lapply(codes, function(x) {
+    codepoints <- strtoi(paste0("0x", substring(x,4,7)))
+    packuni(codepoints)
+    
+  })
+  regmatches(x,m) <- chars
+  Encoding(x)<-"UTF-8"
+  x
+}
+
 # ws_to_symbol -----------------------------------------------------------------
 # Replace leading and trailing white space in character vectors and factor
 # levels by the special character intToUtf8(183)

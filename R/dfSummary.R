@@ -26,6 +26,9 @@
 #' @param graph.col Logical. Display barplots / histograms column in \emph{html}
 #'   reports. \code{TRUE} by default, but can be set globally; see
 #'   \code{\link{st_options}}, option \dQuote{dfSummary.graph.col}.
+#' @param graph.encod Character. Either \dQuote{utf-8} (default) or
+#'   \dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
+#'   option \dQuote{dfSummary.graph.col}.
 #' @param graph.magnif Numeric. Magnification factor, useful if the graphs show
 #'   up too large (then use a value < 1) or too small (use a value > 1). Must be
 #'   positive. Default to \code{1}. Can be set globally; see
@@ -117,6 +120,8 @@
 #'   is set to 5 characters. It can be set globally using 
 #'   \code{\link{st_options}}; for example: \code{st_options(tmp.img.dir = ".")}.
 #'
+#' @seealso \code{\link{print.summarytools}}
+#'
 #' @examples
 #' 
 #' data("tobacco")
@@ -162,6 +167,7 @@ dfSummary <- function(x,
                       na.col           = st_options("dfSummary.na.col"),
                       graph.col        = st_options("dfSummary.graph.col"),
                       graph.magnif     = st_options("dfSummary.graph.magnif"),
+                      graph.encod      = st_options("dfSummary.graph.encod"),
                       style            = st_options("dfSummary.style"),
                       plain.ascii      = st_options("plain.ascii"),
                       justify          = "l",
@@ -555,7 +561,7 @@ crunch_factor <- function(column_data, email_val) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts))
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
       }
     }
     
@@ -600,7 +606,7 @@ crunch_factor <- function(column_data, email_val) {
         png_loc <- encode_graph(table(tmp_data), "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(table(tmp_data)))
+        outlist[[4]] <- txtbarplot(prop.table(table(tmp_data)), encoding = parent.frame()$graph.encod)
       }
     }
   }
@@ -664,7 +670,7 @@ crunch_character <- function(column_data, email_val) {
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
         outlist[[4]] <- txtbarplot(c(prop.table(email_val), prop.dups), 
-                                   emails = TRUE)
+                                   emails = TRUE, encoding = parent.frame()$graph.encod)
       }
     }
 
@@ -697,7 +703,7 @@ crunch_character <- function(column_data, email_val) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts))
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
         }
       }
     } else {
@@ -737,7 +743,7 @@ crunch_character <- function(column_data, email_val) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts))
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
         }
       } 
     }
@@ -781,7 +787,7 @@ crunch_logical <- function(column_data) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts))
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
       }
     }
   }
@@ -933,7 +939,7 @@ crunch_numeric <- function(column_data, is_barcode) {
           png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txtbarplot(prop.table(counts))
+          outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
         }
         
         if (isTRUE(extra_space)) {
@@ -950,7 +956,7 @@ crunch_numeric <- function(column_data, is_barcode) {
           png_loc <- encode_graph(column_data, "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txthist(column_data)
+          outlist[[4]] <- txthist(column_data, encoding = parent.frame()$graph.encod)
         }
       }
     }
@@ -997,7 +1003,7 @@ crunch_time_date <- function(column_data) {
         png_loc <- encode_graph(counts, "barplot", graph.magnif, TRUE)
         outlist[[4]] <- paste0("![](", png_loc, ")")
       } else {
-        outlist[[4]] <- txtbarplot(prop.table(counts))
+        outlist[[4]] <- txtbarplot(prop.table(counts), encoding = parent.frame()$graph.encod)
       }
     } else {
       
@@ -1034,12 +1040,12 @@ crunch_time_date <- function(column_data) {
           png_loc <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif, TRUE)
           outlist[[4]] <- paste0("![](", png_loc, ")")
         } else {
-          outlist[[4]] <- txthist(tmp - mean(tmp))
+          outlist[[4]] <- txthist(tmp - mean(tmp), encoding = parent.frame()$graph.encod)
         }
       }
     }
   }
-  outlist
+  return(outlist)
 }
 
 #' @keywords internal
@@ -1224,26 +1230,60 @@ generate_png_path <- function(d) {
 }
 
 #' @keywords internal
-txtbarplot <- function(props, maxwidth = 20, emails = FALSE) {
-  #widths <- props / max(props) * maxwidth
-  widths <- props * maxwidth
-  outstr <- character(0)
-  for (i in seq_along(widths)) {
-    outstr <- paste(outstr, 
-                    paste0(rep(x = ifelse(isTRUE(emails) && i == length(widths), 
-                                          "D", "I"), times = widths[i]),
-                           collapse = ""),
-                    sep = " \\ \n")
+txtbarplot <- function(props, emails = FALSE, 
+                       encoding = st_options("dfSummary.graph.encod")) {
+  if (encoding == "ascii") {
+    maxwidth <- 20
+    widths   <- props * maxwidth
+    outstr   <- character(length(widths))
+    
+    for (i in seq_along(widths)) {
+      if (isTRUE(emails) && i == length(widths)) {
+        outstr[i] <- strrep("D", times = round(widths[i]))
+      } else {
+        outstr[i] <- strrep("I", times = round(widths[i]))
+      }
+    }
+    #   for (i in seq_along(widths)) {
+    #     outstr <- paste(outstr, 
+    #                     paste0(rep(x = ifelse(isTRUE(emails) && i == length(widths), 
+    #                                           intToUtf8(9617), # meh
+    #                                           intToUtf8(9608)), # 9607 fonctionne bien
+    #                                times = widths[i]),
+    #                            collapse = ""),
+    #                     sep = " \\ \n")
+    #   }
+    
+    output <- paste(outstr, collapse = " \\ \n")
+    output <- sub("^ \\\\ \\n", "", output)
+    output <- enc2native(output)
+    return(output)
+  } else {
+    # int value 9609 = rectangle
+    # values 9610 to 9615 = partial, covers fractions
+    # except for 9613 which is not recognized (at least not on Windows),
+    # so we use 9614 instead
+    maxwidth <- 8
+    widths   <- props * maxwidth
+    outstr   <- character(length(widths))
+    val_add  <- numeric(length(widths))
+  
+    for (i in seq_along(widths)) { #9607
+      outstr[i] <- strrep(intToUtf8(9607), times = round(widths[i]))
+      #val_add[i] <- round((widths[i] - floor(widths[i])))
+      #if (val_add[i] == 1)
+      #  outstr[i] <- paste0(outstr[i], intToUtf8(9612))
+    }
+    return(paste(outstr, collapse = "\\ \n"))
   }
-  outstr <- sub("^ \\\\ \\n", "", outstr)
-  return(outstr)
 }
+
 
 #' @importFrom grDevices nclass.Sturges
 #' @keywords internal
-txthist <- function(data) {
-  data <- data[!is.na(data)]
+txthist <- function(data, encoding) {
   
+  data <- data[!is.na(data)]
   # Correction for vectors of infinitesimal range
   if (diff(range(data)) < 1e-301) {
     e <- paste0('1e',sub(".+e-(.+)", "\\1", min(data)))
@@ -1251,37 +1291,101 @@ txthist <- function(data) {
     data <- data * e
   }
   
-  breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
-  if (length(breaks_x) <= 10) {
-    counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
-  } else {
-    counts <- as.vector(table(cut(data, breaks = 10)))
-  }
+  if (encoding == "ascii") {
   
-  # make counts top at 10
-  counts <- matrix(round(counts / max(counts) * 10), nrow = 1, byrow = TRUE)
-  graph <- matrix(data = "", nrow = 6, ncol = length(counts))
-  for (ro in 6:1) {
-    for (co in seq_along(counts)) {
-      if (counts[co] > 1) {
-        graph[ro,co] <- ": "
-      } else if (counts[co] > 0) {
-        graph[ro,co] <- ". "
-      } else {
-        if (sum(counts[1, co:length(counts)] > 0)) {
-          graph[ro,co] <- "\\ \\ "
+    breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
+    if (length(breaks_x) <= 10) {
+      counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
+    } else {
+      counts <- as.vector(table(cut(data, breaks = 10)))
+    }
+  
+    max_count   <- 10
+    counts      <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
+    graph       <- matrix(data = "", nrow = 5, ncol = length(counts))
+    
+    for (ro in (max_count/2):1) {
+      for (co in seq_along(counts)) {
+        if (counts[co] > 1) {
+          graph[ro,co] <- ": "
+        } else if (counts[co] > 0) {
+          graph[ro,co] <- ". "
+        } else {
+          if (sum(counts[1, co:length(counts)] > 0)) {
+            graph[ro,co] <- "\\ \\ "
+          }
         }
       }
+      counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
+                       nrow = 1, byrow = TRUE)
     }
-    counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
-                     nrow = 1, byrow = TRUE)
+    
+    graphlines <- character()
+    for (ro in seq_len(nrow(graph))) {
+      graphlines[ro] <-  trimws(paste(graph[ro,], collapse = ""), "right")
+    }
+    return(paste(graphlines, collapse = "\\\n"))
+    
+  } else { # utf-8 graphs
+    
+    breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
+    if (length(breaks_x) <= 16) {
+      counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
+    } else {
+      counts <- as.vector(table(cut(data, breaks = 16)))
+    }
+    
+    # The maximum count will impact the number of rows in the graph --
+    # it will be max_count / 2
+    max_count <- 8
+    counts    <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
+    
+    # Create matrix where each cell will hold either:
+    #  - a full height rectangle bar
+    #  - a half height rectangle bar 
+    #  - "\\" which indicate blanks
+    #  - a box frame character
+    graph  <- matrix(data = "", nrow = 6, ncol = length(counts))
+    
+    for (ro in (max_count/2):1) {
+      for (co in seq_along(counts)) {
+        if (counts[co] > 1) {
+          graph[ro,co] <- intToUtf8(9608)
+          #"<U+2588>" #intToUtf8(10495) #9608 works but is dense
+          #10495 braille doesn't seem to work (<U+28FF>)
+        } else if (counts[co] > 0) {
+          graph[ro,co] <- intToUtf8(9604)
+          #"<U+2584>" #intToUtf8(10294) #9604 works with 9608 (dense) 
+          #10294 braille doesn't seem to work
+        } else {
+          if (sum(counts[1, co:length(counts)] > 0)) {
+            graph[ro,co] <- "\\ "
+          }
+        }
+      }
+      counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
+                       nrow = 1, byrow = TRUE)
+    }
+    
+    # graph <- cbind("|", graph, "|")
+    # graph <- rbind("─", graph, "─")
+    # graph[1,1] <- "╭"
+    # graph[nrow(graph),1] <- "╰"
+    # graph[1,ncol(graph)] <- "╮"
+    # graph[nrow(graph),ncol(graph)] <- "╯"
+
+    graphlines <- character()
+    for (ro in seq_len(nrow(graph))) {
+      graphlines[ro] <-  trimws(paste(graph[ro,], collapse = ""), "right")
+    }
+    return(paste(graphlines, collapse = "\\\n"))
   }
+}
+
+
+#' @keywords internal
+txtbarplot_old <- function(props, maxwidth = 20, emails = FALSE) {
   
-  graphlines <- character()
-  for (ro in seq_len(nrow(graph))) {
-    graphlines[ro] <-  trimws(paste(graph[ro,], collapse = ""), "right")
-  }
-  return(paste(graphlines, collapse = "\\\n"))
 }
 
 

@@ -33,6 +33,7 @@ st_options(
   dfSummary.na.col = TRUE,
   dfSummary.graph.col = TRUE,
   dfSummary.graph.magnif = 1,
+  dfSummary.graph.encod = "utf-8",
   dfSummary.silent = FALSE,
   tmp.img.dir = NA,
   subtitle.emphasis = TRUE,
@@ -140,6 +141,9 @@ default.}
 \code{\link{dfSummary}} graphs show up too large (then use a value between
 0 and 1) or too small (use a value > 1). Must be positive. Default to
 \code{1}.}
+
+\item{dfSummary.graph.encod}{Character. Encoding for text graphs. Either
+\dQuote{utf-8} (default) or \dQuote{ascii}.}
 
 \item{dfSummary.silent}{Logical. Hide console messages. \code{FALSE} by 
 default.}

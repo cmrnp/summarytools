@@ -77,6 +77,8 @@
 #'   \code{\link{dfSummary}} graphs show up too large (then use a value between
 #'   0 and 1) or too small (use a value > 1). Must be positive. Default to
 #'   \code{1}.
+#' @param dfSummary.graph.encod Character. Encoding for text graphs. Either
+#'   \dQuote{utf-8} (default) or \dQuote{ascii}.
 #' @param dfSummary.silent Logical. Hide console messages. \code{FALSE} by 
 #'   default.
 #' @param tmp.img.dir Character. Directory used to store temporary images. See
@@ -154,6 +156,7 @@ st_options <- function(option                 = NULL,
                        dfSummary.na.col       = TRUE,
                        dfSummary.graph.col    = TRUE,
                        dfSummary.graph.magnif = 1,
+                       dfSummary.graph.encod  = "utf-8",
                        dfSummary.silent       = FALSE,
                        tmp.img.dir            = NA,
                        subtitle.emphasis      = TRUE,
@@ -224,6 +227,7 @@ st_options <- function(option                 = NULL,
                    "dfSummary.valid.col"    = TRUE,
                    "dfSummary.na.col"       = TRUE,
                    "dfSummary.graph.magnif" = 1,
+                   "dfSummary.graph.encod"  = "utf-8",
                    "dfSummary.silent"       = FALSE,
                    "tmp.img.dir"            = NA_character_,
                    "subtitle.emphasis"      = TRUE,

@@ -118,6 +118,10 @@ rendering dfSummary() with `method = "pander"`, `plain.ascii = TRUE` and
 change this value globally, see \code{\link{st_options}}.}
 
 \item{\dots}{Additional arguments passed to \code{\link[pander]{pander}}.}
+
+\item{graph.encod}{Character. Either \dQuote{utf-8} (default) or
+\dQuote{ascii}. Can be set globally; see \code{\link{st_options}}, 
+option \dQuote{dfSummary.graph.col}.}
 }
 \value{
 A data frame with additional class \code{summarytools} containing as
@@ -202,6 +206,9 @@ dfSummary(tobacco, style = "rmarkdown", plain.ascii = TRUE,
 tobacco \%>\% group_by(gender) \%>\% dfSummary()
 }
 
+}
+\seealso{
+\code{\link{print.summarytools}}
 }
 \author{
 Dominic Comtois, \email{dominic.comtois@gmail.com}

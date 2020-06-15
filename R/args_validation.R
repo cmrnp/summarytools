@@ -667,6 +667,12 @@ check_args_st_options <- function(mc) {
     errmsg %+=% "'dfSummary.graph.col' must be either TRUE or FALSE"
   }
   
+  if ("dfSummary.graph.encod" %in% names(mc) &&
+      !isTRUE(test_character(pf$dfSummary.graph.encod, pattern = "(ascii|utf-8)", 
+                             null.ok = FALSE))) {
+    errmsg %+=% "'dfSummary.graph.encod' must be either 'utf-8' or 'ascii'"
+  }
+  
   if ("dfSummary.graph.magnif" %in% names(mc) && 
       pf$dfSummary.graph.magnif <= 0) {
     errmsg %+=% "'dfSummary.graph.magnif' must be > 0"
