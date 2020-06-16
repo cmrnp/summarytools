@@ -1265,7 +1265,7 @@ txtbarplot <- function(props, emails = FALSE,
     output <- sub("^ \\\\ \\n", "", output)
     output <- enc2native(output)
     return(output)
-  } else {
+  } else if (.st_env$sysname == "Windows") {
     # int value 9609 = rectangle
     # values 9610 to 9615 = partial, covers fractions
     # except for 9613 which is not recognized (at least not on Windows),
@@ -1280,6 +1280,24 @@ txtbarplot <- function(props, emails = FALSE,
       #val_add[i] <- round((widths[i] - floor(widths[i])))
       #if (val_add[i] == 1)
       #  outstr[i] <- paste0(outstr[i], intToUtf8(9612))
+    }
+    return(paste(outstr, collapse = "\\ \n"))
+  } else {
+    maxwidth <- 8
+    widths   <- props * maxwidth
+    outstr   <- character(length(widths))
+    val_add  <- numeric(length(widths))
+    
+    for (i in seq_along(widths)) {
+      outstr[i]  <- strrep(intToUtf8(9608), times = floor(widths[i]))
+      # function to increment up to 8 units on the range of ~ .000001 to .999999
+      f <- function(x) {
+        ceiling((x - floor(x)) * 7)
+      }
+      remain <- f(widths[i] - floor(widths[i]))
+      if (remain > 0) {
+        outstr[i] <- paste0(outstr[i], intToUtf8(9608 + (8 - remain)))
+      }
     }
     return(paste(outstr, collapse = "\\ \n"))
   }
