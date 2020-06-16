@@ -1333,8 +1333,8 @@ txthist <- function(data, encoding) {
     }
     return(paste(graphlines, collapse = "\\\n"))
     
-  } else { # utf-8 graphs
-    
+  } else {
+    # utf-8 graphs
     breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
     if (length(breaks_x) <= 16) {
       counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
@@ -1342,34 +1342,36 @@ txthist <- function(data, encoding) {
       counts <- as.vector(table(cut(data, breaks = 16)))
     }
 
-    #counts <- as.vector(table(cut(data, breaks = 16)))
+    counts <- as.vector(table(cut(data, breaks = 14)))
     
-    # The maximum count will impact the number of rows in the graph --
-    # it will be max_count / 2
+    # Since a cell can account for values 0 (blank), 1 (dot), or 2 (colon),
+    # the height of the histogram will be max(values) divided by 2, where values
+    # are the counts for each bin). Our histogram will thus span over 4 rows.
+    # This is arbitrary and can easily be changed by setting max_count = 10 or
+    # even 6.
     max_count <- 8
-    counts    <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
+    counts    <- matrix(round(counts / max(counts) * max_count), 
+                        nrow = 1, byrow = TRUE)
     
     # Create matrix where each cell will hold either:
-    #  - a full height rectangle bar
-    #  - a half height rectangle bar 
+    #  - a full height rectangular bar
+    #  - a half height squarish bar 
     #  - "\\" which indicate blanks
     #  - a box frame character
-    graph  <- matrix(data = "", nrow = (max_count/2), ncol = length(counts))
+    graph  <- matrix(data = "", 
+                     nrow = (max_count/2), 
+                     ncol = length(counts))
     
     for (ro in (max_count/2):1) {
       for (co in seq_along(counts)) {
         if (counts[co] > 1) {
-          graph[ro,co] <- intToUtf8(9608)
-          #"<U+2588>" #intToUtf8(10495) #9608 works but is dense
-          #10495 braille doesn't seem to work (<U+28FF>)
+          graph[ro,co] <- intToUtf8(9608) # <U+2588>
+          #graph[ro,co] <- intToUtf8(10495) # braille // <U+28FF>
         } else if (counts[co] > 0) {
-          graph[ro,co] <- intToUtf8(9604)
-          #"<U+2584>" #intToUtf8(10294) #9604 works with 9608 (dense) 
-          #10294 braille doesn't seem to work
+          graph[ro,co] <- intToUtf8(9604) # <U+2584>
+          #graph[ro,co] <- intToUtf8(10294) # braille // <U+2836>
         } else {
-          #if (sum(counts[1, co:length(counts)] > 0)) {
             graph[ro,co] <- "\\ "
-          #}
         }
       }
       counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),

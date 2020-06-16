@@ -1,3 +1,7 @@
+# TODO: Instead of modifying objects from parent.frame in-place, return a
+#       list of modified arguments to be dealt with in the parent frame
+#       upon return.
+
 # Arguments validation for freq, ctable, descr and dfSummary functions.
 # Another function for validating st_options arguments follows.
 #' @importFrom checkmate test_int test_logical test_choice test_string test_number
@@ -668,9 +672,14 @@ check_args_st_options <- function(mc) {
   }
   
   if ("dfSummary.graph.enc" %in% names(mc) &&
-      !isTRUE(test_character(pf$dfSummary.graph.enc, pattern = "(ascii|utf-8)", 
-                             null.ok = FALSE))) {
+      !isTRUE(test_character(tolower(substr(pf$dfSummary.graph.enc, 1, 1)),
+                             pattern = "(a|u)", null.ok = FALSE))) {
     errmsg %+=% "'dfSummary.graph.enc' must be either 'ascii' or 'utf-8'"
+  } else {
+    pf$dfSummary.graph.enc <- 
+      switch(tolower(substr(pf$dfSummary.graph.enc, 1, 1)),
+             a = "ascii",
+             u = "utf-8")
   }
   
   if ("dfSummary.graph.magnif" %in% names(mc) && 

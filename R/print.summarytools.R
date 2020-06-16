@@ -377,8 +377,11 @@ print.summarytools <- function(x,
     res[[length(res)]] <- 
       sub("^\\n\\n", "\n", res[[length(res)]])
     
+    #lc_ctype <- Sys.getlocale(category = "LC_CTYPE")
+    #Sys.setlocale("LC_CTYPE", "Chinese")
     file <- normalizePath(file, mustWork = FALSE)
     cat(do.call(paste0, res), file = file, append = append)
+    #Sys.setlocale("LC_CTYPE", "")
     
     if (file != "" && !isTRUE(silent)) {
       if (isTRUE(append))
