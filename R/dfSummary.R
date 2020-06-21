@@ -1289,14 +1289,14 @@ txtbarplot <- function(props, emails = FALSE,
     val_add  <- numeric(length(widths))
     
     for (i in seq_along(widths)) {
-      outstr[i]  <- strrep(intToUtf8(9608), times = floor(widths[i]))
+      outstr[i]  <- strrep(intToUtf8(9609), times = floor(widths[i]))
       # function to increment up to 8 units on the range of ~ .000001 to .999999
       f <- function(x) {
-        ceiling((x - floor(x)) * 7)
+        ceiling((x - floor(x)) * 6)
       }
       remain <- f(widths[i] - floor(widths[i]))
       if (remain > 0) {
-        outstr[i] <- paste0(outstr[i], intToUtf8(9608 + (8 - remain)))
+        outstr[i] <- paste0(outstr[i], intToUtf8(9609 + (7 - remain)))
       }
     }
     return(paste(outstr, collapse = "\\ \n"))
@@ -1351,13 +1351,13 @@ txthist <- function(data, encoding) {
     }
     return(paste(graphlines, collapse = "\\\n"))
     
-  } else { # utf-8 graphs
+  } else {
     
     breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
-    if (length(breaks_x) <= 16) {
+    if (length(breaks_x) <= 12) {
       counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
     } else {
-      counts <- as.vector(table(cut(data, breaks = 16)))
+      counts <- as.vector(table(cut(data, breaks = 12)))
     }
 
     #counts <- as.vector(table(cut(data, breaks = 16)))
@@ -1377,33 +1377,33 @@ txthist <- function(data, encoding) {
     for (ro in (max_count/2):1) {
       for (co in seq_along(counts)) {
         if (counts[co] > 1) {
-          graph[ro,co] <- intToUtf8(9608)
+          graph[ro,co] <- intToUtf8(9608) #9608 #9475
           #"<U+2588>" #intToUtf8(10495) #9608 works but is dense
           #10495 braille doesn't seem to work (<U+28FF>)
         } else if (counts[co] > 0) {
-          graph[ro,co] <- intToUtf8(9604)
+          graph[ro,co] <- intToUtf8(9604) #9595 #9604
           #"<U+2584>" #intToUtf8(10294) #9604 works with 9608 (dense) 
           #10294 braille doesn't seem to work
         } else {
           #if (sum(counts[1, co:length(counts)] > 0)) {
-            graph[ro,co] <- "\\ "
+            graph[ro,co] <- " "
           #}
         }
       }
       counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
                        nrow = 1, byrow = TRUE)
     }
-    
-    graph <- cbind(intToUtf8(9474), graph)
-    graph <- rbind(graph, intToUtf8(9472))
-    #graph[1,1] <- intToUtf8(9581)
-    graph[nrow(graph),1] <- intToUtf8(9584) 
-    # graph[1,ncol(graph)] <- intToUtf8(9582)
-    # graph[nrow(graph),ncol(graph)] <- intToUtf8(9582)
+
+    graph <- cbind(intToUtf8(9474), " ", graph, " ", intToUtf8(9474))
+    graph <- rbind(intToUtf8(9472), graph, intToUtf8(9472))
+    graph[1,1] <- intToUtf8(9484) #9581
+    graph[nrow(graph),1] <- intToUtf8(9492) #9584
+    graph[1,ncol(graph)] <- intToUtf8(9488) #9582
+    graph[nrow(graph),ncol(graph)] <- intToUtf8(9496) #9582
 
     graphlines <- character()
     for (ro in seq_len(nrow(graph))) {
-      graphlines[ro] <-  trimws(paste(graph[ro,], collapse = ""), "right")
+      graphlines[ro] <-  paste(graph[ro,], collapse = "")
     }
     return(paste(graphlines, collapse = "\\\n"))
   }
