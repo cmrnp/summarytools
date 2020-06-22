@@ -48,6 +48,7 @@ conv_non_ascii <- function(...) {
   out
 }
 
+# https://stackoverflow.com/questions/23807085/unicode-characters-conversion-in-r
 trueUnicode <- function(x) {
   packuni<-Vectorize(function(cp) {
     bv <- intToBits(cp)

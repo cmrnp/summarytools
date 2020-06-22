@@ -156,8 +156,20 @@ print.summarytools <- function(x,
   # - using lapply() 
   # - using freq with a dataframe as x
   # - using dplyr::group_by
-  if (is.list(x) && 
-      !attr(x, "st_type") %in% c("ctable", "descr", "dfSummary")) {
+  
+  # First check if object is compatible with print.summarytools (if some
+  # columns or attributes were removed for instance, this might cause an error)
+  init_cond <- is.list(x) && !"st_type" %in% names(attributes(x))
+  
+  if (is.na(init_cond)) {
+    print.default(x)
+    message("the object could not be printed by print.suummarytools - ",
+            "a column or attribute was likely erased - and  was redispatched to ",
+            "print.default();")
+    return()
+  }
+  
+  if (isTRUE(init_cond)) {
     view(x,
          method        = method,
          file          = file,
@@ -238,7 +250,7 @@ print.summarytools <- function(x,
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
                            "graph.col", "col.widths", "na.col", "valid.col", 
-                           "split.tables")) {
+                           "split.tables", "split.cells")) {
     if (format_element %in% names(dotArgs)) {
       attr(x, "format_info")[[format_element]] <- dotArgs[[format_element]]
       overrided_args <- append(overrided_args, format_element)

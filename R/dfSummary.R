@@ -1394,6 +1394,8 @@ txthist <- function(data, encoding) {
                        nrow = 1, byrow = TRUE)
     }
 
+    # nbsp = <U+00A0>
+    # 9608 = <U+2587>
     graph <- cbind(intToUtf8(9474), " ", graph, " ", intToUtf8(9474))
     graph <- rbind(intToUtf8(9472), graph, intToUtf8(9472))
     graph[1,1] <- intToUtf8(9484) #9581
@@ -1408,13 +1410,6 @@ txthist <- function(data, encoding) {
     return(paste(graphlines, collapse = "\\\n"))
   }
 }
-
-
-#' @keywords internal
-txtbarplot_old <- function(props, maxwidth = 20, emails = FALSE) {
-  
-}
-
 
 detect_email <- function(x) {
 
