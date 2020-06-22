@@ -238,7 +238,7 @@ print.summarytools <- function(x,
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
                            "graph.col", "col.widths", "na.col", "valid.col", 
-                           "split.tables")) {
+                           "split.tables", "split.cells")) {
     if (format_element %in% names(dotArgs)) {
       attr(x, "format_info")[[format_element]] <- dotArgs[[format_element]]
       overrided_args <- append(overrided_args, format_element)
