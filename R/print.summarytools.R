@@ -376,6 +376,23 @@ print.summarytools <- function(x,
       }
     }
   } else if (attr(x, "st_type") == "dfSummary") {
+    
+    # Encoding hack that allows pander to print utf8 plots correctly on 
+    # non-UTF-8 systems (most notably Windows in some parts of the World).
+    if (isFALSE(l10n_info()[["UTF-8"]])) {
+      message("Temporarily setting LC_CTYPE to 'Chinese' to allow UTF-8 ",
+              "printing")
+      current_lc_ctype <- Sys.getlocale("LC_CTYPE")
+      rc <- try(Sys.setlocale("LC_CTYPE", "Chinese"))
+      if (inherits(rc, "try-error")) {
+        message("Unfortunately the hack does not work on this system. Until ",
+                "a more robust solution is found, it is recommended to set ",
+                "st_options(dfSummary.graph.enc = 'ascii')")
+      } else {
+        on.exit(Sys.setlocale("LC_CTYPE", current_lc_ctype))
+      }
+    }
+    
     res <- print_dfs(x, method)
     if (is.na(report.title)) {
       report.title <- trs("title.dfSummary")
@@ -1387,9 +1404,9 @@ print_dfs <- function(x, method) {
           '<td align="left" style="padding:0;vertical-align:middle"><table ',
           'style="border-collapse:collapse;border:none;margin:0">',
           cell, '</table></td>'
-          )
         )
       )
+    )
   }
   
   # Remove Var number ("No") column if specified in call to print/view
@@ -1483,7 +1500,7 @@ print_dfs <- function(x, method) {
                           user_fmt)
     
     main_sect <- build_heading_pander(format_info, data_info)
-
+    
     main_sect %+=%
       paste(
         capture.output(
