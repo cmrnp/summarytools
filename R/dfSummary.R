@@ -1165,6 +1165,7 @@ encode_graph <- function(data, graph_type, graph.magnif = 1,
                                     main = NULL, col = "grey94",
                                     border = "grey65")),
               silent = TRUE)
+
     if (inherits(cl, "try-error")) {
       plot.new()
       text("Graph Not Available", x = 0.5, y = 0.5, cex = 1)
@@ -1251,58 +1252,40 @@ txtbarplot <- function(props, emails = FALSE,
         outstr[i] <- strrep("I", times = round(widths[i]))
       }
     }
-    #   for (i in seq_along(widths)) {
-    #     outstr <- paste(outstr, 
-    #                     paste0(rep(x = ifelse(isTRUE(emails) && i == length(widths), 
-    #                                           intToUtf8(9617), # meh
-    #                                           intToUtf8(9608)), # 9607 fonctionne bien
-    #                                times = widths[i]),
-    #                            collapse = ""),
-    #                     sep = " \\ \n")
-    #   }
-    
+
     output <- paste(outstr, collapse = " \\ \n")
     output <- sub("^ \\\\ \\n", "", output)
     output <- enc2native(output)
     return(output)
-  } else if (.st_env$sysname == "Windows") {
-    # int value 9609 = rectangle
-    # values 9610 to 9615 = partial, covers fractions
-    # except for 9613 which is not recognized (at least not on Windows),
-    # so we use 9614 instead
-    maxwidth <- 8
-    widths   <- props * maxwidth
-    outstr   <- character(length(widths))
-    val_add  <- numeric(length(widths))
-  
-    for (i in seq_along(widths)) { #9607
-      outstr[i] <- strrep(intToUtf8(9607), times = round(widths[i]))
-      #val_add[i] <- round((widths[i] - floor(widths[i])))
-      #if (val_add[i] == 1)
-      #  outstr[i] <- paste0(outstr[i], intToUtf8(9612))
-    }
-    return(paste(outstr, collapse = "\\ \n"))
+    
   } else {
+    
+    # UTF-8 -- Int values 9610 to 9615 = partial, covers fractions
+    # except for 9612 which doesn't have same height as its neighbors,
+    # so we use 9613 instead
+    
     maxwidth <- 8
     widths   <- props * maxwidth
     outstr   <- character(length(widths))
-    val_add  <- numeric(length(widths))
     
     for (i in seq_along(widths)) {
       outstr[i]  <- strrep(intToUtf8(9609), times = floor(widths[i]))
-      # function to increment up to 8 units on the range of ~ .000001 to .999999
+      # function to increment up to 6 units on the range of ~ .0001 to .9999
+      # plot(f, .000001, .999999)
       f <- function(x) {
         ceiling((x - floor(x)) * 6)
       }
-      remain <- f(widths[i] - floor(widths[i]))
-      if (remain > 0) {
-        outstr[i] <- paste0(outstr[i], intToUtf8(9609 + (7 - remain)))
+      remains <- f(widths[i] - floor(widths[i]))
+      if (remains > 0) {
+        int_value <- 9609 + (7 - remains)
+        outstr[i] <- paste0(outstr[i], 
+                            intToUtf8(ifelse(int_value != 9612, int_value, 
+                                             9613)))
       }
     }
     return(paste(outstr, collapse = "\\ \n"))
   }
 }
-
 
 #' @importFrom grDevices nclass.Sturges
 #' @keywords internal
@@ -1319,14 +1302,16 @@ txthist <- function(data, encoding) {
   if (encoding == "ascii") {
   
     breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
-    if (length(breaks_x) <= 10) {
+    if (length(breaks_x) <= 8) {
       counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
     } else {
-      counts <- as.vector(table(cut(data, breaks = 10)))
+      counts <- as.vector(table(cut(data, breaks = 8)))
     }
 
+    # Set maximum "count", i.e. height for each bar
     max_count   <- 10
-    counts      <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
+    counts      <- matrix(round(counts / max(counts) * max_count), 
+                          nrow = 1, byrow = TRUE)
     graph       <- matrix(data = "", nrow = 5, ncol = length(counts))
     
     for (ro in (max_count/2):1) {
@@ -1353,55 +1338,43 @@ txthist <- function(data, encoding) {
     
   } else {
     
-    breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
-    if (length(breaks_x) <= 12) {
-      counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
-    } else {
-      counts <- as.vector(table(cut(data, breaks = 12)))
-    }
-
-    #counts <- as.vector(table(cut(data, breaks = 16)))
+    # UTF-8 histograms -- fix breaks to 10
+    counts <- as.vector(table(cut(data, breaks = 10)))
     
     # The maximum count will impact the number of rows in the graph --
     # it will be max_count / 2
     max_count <- 8
-    counts    <- matrix(round(counts / max(counts) * max_count), nrow = 1, byrow = TRUE)
+    counts    <- matrix(round(counts / max(counts) * max_count),
+                        nrow = 1, byrow = TRUE)
     
-    # Create matrix where each cell will hold either:
+    # Create matrix where each element will hold either:
     #  - a full height rectangle bar
     #  - a half height rectangle bar 
-    #  - "\\" which indicate blanks
+    #  - "\\" for blanks
     #  - a box frame character
     graph  <- matrix(data = "", nrow = (max_count/2), ncol = length(counts))
     
     for (ro in (max_count/2):1) {
       for (co in seq_along(counts)) {
         if (counts[co] > 1) {
-          graph[ro,co] <- intToUtf8(9608) #9608 #9475
-          #"<U+2588>" #intToUtf8(10495) #9608 works but is dense
-          #10495 braille doesn't seem to work (<U+28FF>)
+          graph[ro,co] <- intToUtf8(9608)
         } else if (counts[co] > 0) {
-          graph[ro,co] <- intToUtf8(9604) #9595 #9604
-          #"<U+2584>" #intToUtf8(10294) #9604 works with 9608 (dense) 
-          #10294 braille doesn't seem to work
+          graph[ro,co] <- intToUtf8(9604)
         } else {
-          #if (sum(counts[1, co:length(counts)] > 0)) {
-            graph[ro,co] <- " "
-          #}
+          graph[ro,co] <- " "
         }
       }
       counts <- matrix(apply(X = counts - 2, MARGIN = 2, FUN = max, 0),
                        nrow = 1, byrow = TRUE)
     }
 
-    # nbsp = <U+00A0>
-    # 9608 = <U+2587>
+    # Build border
     graph <- cbind(intToUtf8(9474), " ", graph, " ", intToUtf8(9474))
     graph <- rbind(intToUtf8(9472), graph, intToUtf8(9472))
-    graph[1,1] <- intToUtf8(9484) #9581
-    graph[nrow(graph),1] <- intToUtf8(9492) #9584
-    graph[1,ncol(graph)] <- intToUtf8(9488) #9582
-    graph[nrow(graph),ncol(graph)] <- intToUtf8(9496) #9582
+    graph[1,1] <- intToUtf8(9484)           # 9581 round, 9484 sharp
+    graph[nrow(graph),1] <- intToUtf8(9492) # 9584, 9492 
+    graph[1,ncol(graph)] <- intToUtf8(9488) # 9582, 9488
+    graph[nrow(graph),ncol(graph)] <- intToUtf8(9496) # 9582, 9496 
 
     graphlines <- character()
     for (ro in seq_len(nrow(graph))) {
@@ -1454,8 +1427,8 @@ detect_barcode <- function(x) {
     return(FALSE)
   }
   
-  # check that all lengths are equal on a sample of 50 values, and that this length
-  # is compatible with one of the EAN/UPC/ITC specifications
+  # check that all lengths are equal on a sample of 50 values, and that this 
+  # length is compatible with one of the EAN/UPC/ITC specifications
   x_samp <- na.omit(sample(x = x, size = min(length(x), 50), replace = FALSE))
   if (length(x_samp) < 3 || 
       (len <- nchar(min(x_samp, na.rm = TRUE))) != nchar(max(x, na.rm = TRUE)) ||
