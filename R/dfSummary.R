@@ -1260,28 +1260,13 @@ txtbarplot <- function(props, emails = FALSE,
     
   } else {
     
-    # UTF-8 -- Int values 9610 to 9615 = partial, covers fractions
-    # except for 9612 which doesn't have same height as its neighbors,
-    # so we use 9613 instead
-    
-    maxwidth <- 8
+    # UTF-8
+    maxwidth <- 16
     widths   <- props * maxwidth
     outstr   <- character(length(widths))
     
     for (i in seq_along(widths)) {
-      outstr[i]  <- strrep(intToUtf8(9609), times = floor(widths[i]))
-      # function to increment up to 6 units on the range of ~ .0001 to .9999
-      # plot(f, .000001, .999999)
-      f <- function(x) {
-        ceiling((x - floor(x)) * 6)
-      }
-      remains <- f(widths[i] - floor(widths[i]))
-      if (remains > 0) {
-        int_value <- 9609 + (7 - remains)
-        outstr[i] <- paste0(outstr[i], 
-                            intToUtf8(ifelse(int_value != 9612, int_value, 
-                                             9613)))
-      }
+      outstr[i]  <- strrep(intToUtf8(9632), times = floor(widths[i])) #5010
     }
     return(paste(outstr, collapse = "\\ \n"))
   }
